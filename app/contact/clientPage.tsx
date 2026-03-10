@@ -9,6 +9,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Mail, MapPin, Phone, Send } from "lucide-react";
 import PublicLayout from "@/components/PublicLayout";
 import api from "@/lib/api";
+import { set } from "react-hook-form";
 
 const Contact = () => {
   const { toast } = useToast();
@@ -24,6 +25,8 @@ const Contact = () => {
     setErrors(e);
     return Object.keys(e).length === 0;
   };
+
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,7 +85,10 @@ const Contact = () => {
                 <Input
                   id="name"
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={(e) => {
+                    setForm({ ...form, name: e.target.value })
+                    setErrors({ ...errors, name: "" })
+                  }}
                   className="mt-1"
                   placeholder="Your name"
                 />
@@ -92,9 +98,12 @@ const Contact = () => {
                 <Label htmlFor="email">Email</Label>
                 <Input
                   id="email"
-                  type="email"
+                  // type="email"
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  onChange={(e) => {
+                    setForm({ ...form, email: e.target.value })
+                    setErrors({ ...errors, email: "" })
+                  }}
                   className="mt-1"
                   placeholder="you@company.com"
                 />
@@ -106,7 +115,10 @@ const Contact = () => {
                   id="message"
                   rows={5}
                   value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
+                  onChange={(e) => {
+                    setForm({ ...form, message: e.target.value })
+                    setErrors({ ...errors, message: "" })
+                  }}
                   className="mt-1"
                   placeholder="How can we help?"
                 />

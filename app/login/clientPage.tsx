@@ -122,14 +122,16 @@ const Login = () => {
               <Label htmlFor="email">Email</Label>
               <Input
                 id="email"
-                type="email"
+                // type="email"
                 placeholder="you@company.com"
                 className={`mt-1 ${
                   errors.email ? "border-red-500" : ""
                 }`}
                 value={form.email}
                 onChange={(e) =>
-                  setForm({ ...form, email: e.target.value })
+                 { setForm({ ...form, email: e.target.value })
+                  setErrors({ ...errors, email: "" })
+                  }
                 }
               />
               {errors.email && (
@@ -152,7 +154,9 @@ const Login = () => {
                   }`}
                   value={form.password}
                   onChange={(e) =>
-                    setForm({ ...form, password: e.target.value })
+                    { setForm({ ...form, password: e.target.value })
+                      setErrors({ ...errors, password: "" })
+                    }
                   }
                 />
                 <button

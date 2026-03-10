@@ -142,7 +142,7 @@ useEffect(() => {
   };
 
   return (
-    <PublicLayout>
+    <PublicLayout> 
       <section className="section-padding flex items-center justify-center min-h-[80vh]">
         <motion.div
           className="glass-card p-8 w-full max-w-md"
@@ -160,7 +160,9 @@ useEffect(() => {
                 <Input
                   value={form.username}
                   onChange={(e) =>
-                    setForm({ ...form, username: e.target.value })
+                   { setForm({ ...form, username: e.target.value })
+                    setErrors({ ...errors, username: "" })
+                    }
                   }
                 />
                 {errors.username && (
@@ -171,11 +173,13 @@ useEffect(() => {
               <div>
                 <Label>Email</Label>
                 <Input
-                  type="email"
+                  // type="email"
                   value={form.email}
                   onChange={(e) =>
-                    setForm({ ...form, email: e.target.value })
-                  }
+                    { setForm({ ...form, email: e.target.value })
+                      setErrors({ ...errors, email: "" })
+                      }
+                    }
                 />
                 {errors.email && (
   <p className="text-red-500 text-xs mt-1">{errors.email}</p>
@@ -189,8 +193,10 @@ useEffect(() => {
                     type={showPass ? "text" : "password"}
                     value={form.password}
                     onChange={(e) =>
-                      setForm({ ...form, password: e.target.value })
-                    }
+                      { setForm({ ...form, password: e.target.value })
+                        setErrors({ ...errors, password: "" })
+                        }
+                      }
                     />
                     {errors.password && (
   <p className="text-red-500 text-xs mt-1">{errors.password}</p>
