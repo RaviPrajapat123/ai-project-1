@@ -75,7 +75,7 @@ const Header = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden border-t border-border/50 bg-background/95 backdrop-blur-xl"
+            className="md:hidden border-t border-border/50 bg-gray-50/65 backdrop-blur-xl"
           >
             <div className="container mx-auto px-4 py-4 flex flex-col gap-3">
               {navLinks.map((link) => (
@@ -88,7 +88,7 @@ const Header = () => {
                   {link.name}
                 </Link>
               ))}
-              <div className="flex gap-3 pt-2">
+              <div className="flex gap-3 pt-2 border-t border-border/50">
                 <Button variant="ghost" size="sm" asChild className="flex-1">
                   <Link href="/login">Sign In</Link>
                 </Button>
