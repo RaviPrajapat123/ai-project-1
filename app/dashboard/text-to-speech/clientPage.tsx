@@ -9,16 +9,23 @@ import { Slider } from "@/components/ui/slider";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Play, Download, Loader2, Volume2 } from "lucide-react";
 import DashboardLayout from "@/components/DashboardLayout";
-import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import axios from "axios";
+
+const voices = [
+  { id: "sarah", name: "Sarah", lang: "English (US)", gender: "Female" },
+  { id: "james", name: "James", lang: "English (UK)", gender: "Male" },
+  { id: "priya", name: "Priya", lang: "English (IN)", gender: "Female" },
+  { id: "carlos", name: "Carlos", lang: "Spanish", gender: "Male" },
+  { id: "yuki", name: "Yuki", lang: "Japanese", gender: "Female" },
+  { id: "hans", name: "Hans", lang: "German", gender: "Male" },
+];
 
 const TextToSpeech = () => {
   const { toast } = useToast();
   const [text, setText] = useState("");
   const [voices, setVoices] = useState<any[]>([]);
-  const [voicesLoading, setVoicesLoading] = useState(true);
-  const [voice, setVoice] = useState("");
+const [voice, setVoice] = useState("");
   const [speed, setSpeed] = useState([1.0]);
   const [stability, setStability] = useState([0.5]);
   const [similarity, setSimilarity] = useState([0.75]);
@@ -34,8 +41,7 @@ const audioRef = useRef<HTMLAudioElement | null>(null);
 useEffect(() => {
   const fetchVoices = async () => {
     try {
-      setVoicesLoading(true);
-      const res = await axios.get("/api/voices/allVoices");
+      const res = await axios.get("/api/voices");
       setVoices(res.data);
 
       if (res.data.length > 0) {
@@ -43,8 +49,6 @@ useEffect(() => {
       }
     } catch (err) {
       console.error("Failed to load voices");
-    } finally {
-      setVoicesLoading(false);
     }
   };
 
@@ -222,24 +226,18 @@ setAudioReady(true);
               <div className="glass-card p-5 space-y-5">
                 <div>
                   <Label className="text-sm font-medium">Voice</Label>
-                  {voicesLoading ? (
-                    <div className="mt-2 space-y-2">
-                      <Skeleton className="h-10 w-full" />
-                    </div>
-                  ) : (
-                    <Select value={voice} onValueChange={setVoice}>
-                      <SelectTrigger className="mt-2 cursor-pointer">
-                        <SelectValue placeholder="Select voice" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {voices.map((v) => (
-                          <SelectItem key={v.voice_id} value={v.voice_id} className="cursor-pointer">
-                            {v.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  )}
+                  <Select value={voice} onValueChange={setVoice}>
+  <SelectTrigger className="mt-2 cursor-pointer">
+    <SelectValue placeholder="Select voice" />
+  </SelectTrigger>
+  <SelectContent>
+    {voices.map((v) => (
+      <SelectItem key={v.voice_id} value={v.voice_id} className="cursor-pointer">
+        {v.name}
+      </SelectItem>
+    ))}
+  </SelectContent>
+</Select>
                 </div>
 
                 <div>
