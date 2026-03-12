@@ -7,19 +7,19 @@ import { Label } from "@/components/ui/label";
 import DashboardLayout from "@/components/DashboardLayout";
 import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const Profile = () => {
   const [token, setToken] = useState<string | null>(null);
   const {toast} = useToast();
   const [profile, setProfile] = useState({
-    name: "",
+    firstName: "",
+    lastName: "",
     email: "",
   });
 
   const [passwordData, setPasswordData] = useState({
-    current_password: "",
-    new_password: "",
+    currentPassword: "",
+    newPassword: "",
   });
 
   const [errors, setErrors] = useState<any>({});
@@ -27,7 +27,6 @@ const Profile = () => {
 
   const [profileLoading, setProfileLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
-  const [profileFetchLoading, setProfileFetchLoading] = useState(true);
 
   // ===============================
   // GET TOKEN FROM COOKIE
@@ -43,37 +42,6 @@ const Profile = () => {
     }
   }, []);
 
-
-  useEffect(() => {
-    const fetchProfile = async () => {
-
-      if (!token) return;
-      try {
-        setProfileFetchLoading(true);
-        const res = await api.get("/profile", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        const data = res.data;
-        setProfile({
-          name: data.name || "",
-          email: data.email || "",
-        });
-      } catch (error) {
-        toast({
-          title: "Error", 
-          description: "Failed to fetch profile data",
-          variant: "destructive",
-        });
-      } finally {
-             setProfileFetchLoading(false);
-
-      }
-
-    };
-    fetchProfile();
-  }, [token]);
   // ===============================
   // VALIDATIONS
   // ===============================
@@ -81,15 +49,15 @@ const Profile = () => {
   const validateProfile = () => {
     const newErrors: any = {};
 
-    if (!profile.name.trim()) {
-      newErrors.name = "Name is required";
+    if (!profile.firstName.trim()) {
+      newErrors.firstName = "First name is required";
     }
 
-    // if (!profile.email.trim()) {
-    //   newErrors.email = "Email is required";
-    // } else if (!profile.email.includes("@")) {
-    //   newErrors.email = "Enter valid email";
-    // }
+    if (!profile.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!profile.email.includes("@")) {
+      newErrors.email = "Enter valid email";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -98,14 +66,14 @@ const Profile = () => {
   const validatePassword = () => {
     const newErrors: any = {};
 
-    if (!passwordData.current_password) {
-      newErrors.current_password = "Current password is required";
+    if (!passwordData.currentPassword) {
+      newErrors.currentPassword = "Current password is required";
     }
 
-    if (!passwordData.new_password) {
-      newErrors.new_password = "New password is required";
-    } else if (passwordData.new_password.length < 6) {
-      newErrors.new_password = "Minimum 6 characters required";
+    if (!passwordData.newPassword) {
+      newErrors.newPassword = "New password is required";
+    } else if (passwordData.newPassword.length < 6) {
+      newErrors.newPassword = "Minimum 6 characters required";
     }
 
     setPasswordErrors(newErrors);
@@ -123,7 +91,7 @@ const Profile = () => {
       setProfileLoading(true);
 
       await api.post(
-        "/profile/update",
+        "/user/profile",
         profile,
         {
           headers: {
@@ -173,8 +141,8 @@ const Profile = () => {
       });
 
       setPasswordData({
-        current_password: "",
-        new_password: "",
+        currentPassword: "",
+        newPassword: "",
       });
     } catch (error: any) {
       toast({
@@ -197,59 +165,62 @@ const Profile = () => {
         >
           {/* PROFILE SECTION */}
           <div className="glass-card p-6 space-y-5">
-  <h3 className="font-semibold text-lg">Profile Settings</h3>
+            <h3 className="font-semibold text-lg">Profile Settings</h3>
 
-  {profileFetchLoading ? (
-    <div className="space-y-4">
-      <Skeleton className="h-4 w-32" />
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-4 w-32 mt-4" />
-      <Skeleton className="h-10 w-full" />
-      <Skeleton className="h-10 w-40 mt-4" />
-    </div>
-  ) : (
-    <>
-      <div className="grid sm:grid-cols-1 gap-4">
-        <div>
-          <Label>First Name</Label>
-          <Input
-            className="mt-1"
-            value={profile.name}
-            onChange={(e) => {
-              setProfile({ ...profile, name: e.target.value });
-              setErrors({
-                ...errors,
-                name: "",
-              });
-            }}
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-          )}
-        </div>
-      </div>
+            <div className="grid sm:grid-cols-2 gap-4">
+              <div>
+                <Label>First Name</Label>
+                <Input
+                  className="mt-1"
+                  value={profile.firstName}
+                  onChange={(e) =>
+                    setProfile({ ...profile, firstName: e.target.value })
+                  }
+                />
+                {errors.firstName && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.firstName}
+                  </p>
+                )}
+              </div>
 
-      <div>
-        <Label>Email</Label>
-        <Input
-          type="email"
-          className="mt-1"
-          value={profile.email}
-          disabled
-        />
-      </div>
+              <div>
+                <Label>Last Name</Label>
+                <Input
+                  className="mt-1"
+                  value={profile.lastName}
+                  onChange={(e) =>
+                    setProfile({ ...profile, lastName: e.target.value })
+                  }
+                />
+              </div>
+            </div>
 
-      <Button
-        variant="hero"
-        onClick={handleProfileUpdate}
-        disabled={profileLoading}
-        className="cursor-pointer"
-      >
-        {profileLoading ? "Saving..." : "Save Changes"}
-      </Button>
-    </>
-  )}
-</div>
+            <div>
+              <Label>Email</Label>
+              <Input
+                type="email"
+                className="mt-1"
+                value={profile.email}
+                onChange={(e) =>
+                  setProfile({ ...profile, email: e.target.value })
+                }
+              />
+              {errors.email && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.email}
+                </p>
+              )}
+            </div>
+
+            <Button
+              variant="hero"
+              onClick={handleProfileUpdate}
+              disabled={profileLoading}
+            >
+              {profileLoading ? "Saving..." : "Save Changes"}
+            </Button>
+          </div>
 
           {/* PASSWORD SECTION */}
           <div className="glass-card p-6 space-y-4">
@@ -260,22 +231,17 @@ const Profile = () => {
               <Input
                 type="password"
                 className="mt-1"
-                value={passwordData.current_password}
+                value={passwordData.currentPassword}
                 onChange={(e) =>
-                 { setPasswordData({
+                  setPasswordData({
                     ...passwordData,
-                    current_password: e.target.value,
+                    currentPassword: e.target.value,
                   })
-                  setPasswordErrors({
-                    ...passwordErrors,
-                    current_password: "",
-                  })
-                }
                 }
               />
-              {passwordErrors.current_password && (
+              {passwordErrors.currentPassword && (
                 <p className="text-red-500 text-sm mt-1">
-                  {passwordErrors.current_password}
+                  {passwordErrors.currentPassword}
                 </p>
               )}
             </div>
@@ -285,22 +251,17 @@ const Profile = () => {
               <Input
                 type="password"
                 className="mt-1"
-                value={passwordData.new_password}
+                value={passwordData.newPassword}
                 onChange={(e) =>
-                 { setPasswordData({
+                  setPasswordData({
                     ...passwordData,
-                    new_password: e.target.value,
+                    newPassword: e.target.value,
                   })
-                  setPasswordErrors({
-                    ...passwordErrors,
-                    new_password: "",
-                  }) 
-                }
                 }
               />
-              {passwordErrors.new_password && (
+              {passwordErrors.newPassword && (
                 <p className="text-red-500 text-sm mt-1">
-                  {passwordErrors.new_password}
+                  {passwordErrors.newPassword}
                 </p>
               )}
             </div>
@@ -309,7 +270,6 @@ const Profile = () => {
               variant="hero-outline"
               onClick={handlePasswordUpdate}
               disabled={passwordLoading}
-              className="cursor-pointer"
             >
               {passwordLoading ? "Updating..." : "Update Password"}
             </Button>
